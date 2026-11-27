@@ -1,0 +1,39 @@
+<!-- Herda o layout base com menu, mensagens flash e rodapé -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Detalhe{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <!-- Nome principal do usuário -->
+  <h1>{{ usuario.nome }}</h1>
+
+  <!-- Lista de definição em grade para exibir os dados do usuário -->
+  <dl class="row">
+    <!-- E-mail -->
+    <dt class="col-sm-3">E-mail</dt>
+    <dd class="col-sm-9">{{ usuario.email }}</dd>
+
+    <!-- Perfil e descrição do perfil -->
+    <dt class="col-sm-3">Perfil</dt>
+    <dd class="col-sm-9">{{ usuario.perfil }} — {{ usuario.perfil_descricao or '—' }}</dd>
+
+    <!-- CPF -->
+    <dt class="col-sm-3">CPF</dt>
+    <dd class="col-sm-9">{{ usuario.cpf or '—' }}</dd>
+
+    <!-- Data de nascimento formatada pelo filtro customizado 'data_br' -->
+    <dt class="col-sm-3">Nascimento</dt>
+    <dd class="col-sm-9">{{ usuario.data_nascimento | data_br }}</dd>
+
+    <!-- Endereço completo com valores padrão caso algum campo esteja vazio -->
+    <dt class="col-sm-3">Endereço</dt>
+    <dd class="col-sm-9">
+      {{ usuario.endereco or '—' }} {{ usuario.numero or '' }} - {{ usuario.cidade or '—' }}/{{ usuario.estado or '—' }}
+    </dd>
+  </dl>
+
+  <!-- Botão para retornar à listagem de usuários -->
+  <a href="{{ url_for('listar_usuarios') }}" class="btn btn-light">Voltar</a>
+{% endblock %}

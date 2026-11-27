@@ -1,0 +1,50 @@
+<!-- Herda a estrutura base com menu, cabeçalho e rodapé -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Perfil{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <!-- Garante que 'dados' seja um dicionário vazio caso não venha preenchido da rota -->
+  {% set dados = dados or {} %}
+
+  <!-- Título muda de acordo com a ação recebida ('editar' ou 'inserir') -->
+  <h1>{{ 'Editar perfil' if acao == 'editar' else 'Novo perfil' }}</h1>
+
+  <!-- Envia o formulário para a rota de edição ou de criação -->
+  <form method="post" action="{{ url_for('editar_perfil', id_perfil=id_perfil) if acao == 'editar' else url_for('inserir_perfil') }}">
+    <!-- Token de segurança contra CSRF -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Campo: Nome do perfil -->
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome</label>
+      <input
+        id="nome"
+        type="text"
+        class="form-control"
+        name="nome"
+        required
+        minlength="3"
+        maxlength="100"
+        value="{{ dados.nome or '' }}"
+      >
+    </div>
+
+    <!-- Campo: Descrição do perfil -->
+    <div class="mb-3">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea
+        id="descricao"
+        class="form-control"
+        name="descricao"
+        maxlength="255"
+      >{{ dados.descricao or '' }}</textarea>
+    </div>
+
+    <!-- Botões de ação -->
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a class="btn btn-light ms-2" href="{{ url_for('listar_perfis') }}">Cancelar</a>
+  </form>
+{% endblock %}

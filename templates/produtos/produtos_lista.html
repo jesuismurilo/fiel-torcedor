@@ -1,0 +1,85 @@
+<!-- Herda o layout base com menu, mensagens flash e rodapé -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Produtos{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <!-- Cabeçalho com título e botão para cadastrar novo produto -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Produtos</h1>
+    <a class="btn btn-success" href="{{ url_for('inserir_produto') }}">Novo produto</a>
+  </div>
+
+  <!-- Tabela de produtos -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Categoria</th>
+        <th>Preço</th>
+        <th>Estoque</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for p in produtos %}
+        <tr>
+          <!-- Miniatura da foto (se existir) e nome do produto -->
+          <td>
+            {% if p.foto %}
+              <img
+                src="{{ url_for('static', filename=p.foto) }}"
+                alt="{{ p.nome }}"
+                width="48"
+                height="48"
+                class="me-2 rounded object-fit-cover"
+              >
+            {% endif %}
+            {{ p.nome }}
+          </td>
+
+          <!-- Categoria com fallback caso esteja vazia -->
+          <td>{{ p.categoria or 'Sem categoria' }}</td>
+
+          <!-- Preço formatado pelo filtro customizado 'moeda' -->
+          <td>{{ p.preco | moeda }}</td>
+
+          <!-- Quantidade em estoque -->
+          <td>{{ p.estoque }}</td>
+
+          <!-- Status legível conforme o booleano 'ativo' -->
+          <td>{{ 'Ativo' if p.ativo else 'Inativo' }}</td>
+
+          <!-- Botões de editar e excluir -->
+          <td>
+            <a
+              class="btn btn-sm btn-warning"
+              href="{{ url_for('editar_produto', id_produto=p.id_produto) }}"
+            >
+              Editar
+            </a>
+
+            <!-- Exclusão via POST com token CSRF -->
+            <form
+              class="d-inline"
+              method="post"
+              action="{{ url_for('excluir_produto', id_produto=p.id_produto) }}"
+            >
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <!-- Exibido quando 'produtos' está vazio -->
+        <tr>
+          <td colspan="6">Nenhum produto.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

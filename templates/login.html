@@ -1,0 +1,50 @@
+<!-- Herda o layout limpo (sem menu principal, ideal para tela de autenticação) -->
+{% extends 'layout/base_limpa.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Login{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <!-- Cartão centralizado com o formulário de entrada -->
+  <div class="card shadow p-4">
+    <!-- Nome do sistema e instrução inicial -->
+    <h2 class="text-danger">Fiel Torcedor</h2>
+    <p>Entre para continuar</p>
+
+    <!-- Envia as credenciais para a rota de login via POST -->
+    <form method="post" action="{{ url_for('login') }}">
+      <!-- Token de segurança contra CSRF -->
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- Campo: E-mail (mantém o valor digitado se houver falha no login) -->
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          name="email"
+          value="{{ email or '' }}"
+          required
+          autofocus
+        >
+      </div>
+
+      <!-- Campo: Senha -->
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input
+          id="senha"
+          type="password"
+          class="form-control"
+          name="senha"
+          required
+        >
+      </div>
+
+      <!-- Botão de envio em largura total -->
+      <button type="submit" class="btn btn-danger w-100">Entrar</button>
+    </form>
+  </div>
+{% endblock %}

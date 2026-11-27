@@ -1,0 +1,69 @@
+<!-- Herda o layout base com menu, mensagens flash e rodapé -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Painel{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <h1>Painel</h1>
+
+  <!-- Lista de cartões de resumo: (título, chave em 'totais', nome da rota) -->
+  <!-- O quarto item é a lista de perfis autorizados (none = qualquer perfil logado) -->
+  {% set cards = [
+    ('Usuários', 'usuarios', 'listar_usuarios', ['Administrador', 'Gerente']),
+    ('Perfis', 'perfis', 'listar_perfis', ['Administrador']),
+    ('Produtos', 'produtos', 'listar_produtos', none)
+  ] %}
+
+  <!-- Grade com os cartões de totais -->
+  <div class="row g-3 my-3">
+    {% for label, key, link, permitidos in cards %}
+      {% if permitidos is none or session.perfil in permitidos %}
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5>{{ label }}</h5>
+            <div class="display-5">{{ totais[key] }}</div>
+            <a href="{{ url_for(link) }}" class="btn btn-outline-danger">Abrir</a>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {# Tabela de usuários recentes: só para quem pode abrir a lista de usuários #}
+  {% if session.perfil in ['Administrador', 'Gerente'] %}
+  <div class="card">
+    <div class="card-header">Últimos usuários</div>
+
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Perfil</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for u in ultimos_usuarios %}
+            <tr>
+              <td>{{ u.nome }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.perfil }}</td>
+            </tr>
+          {% else %}
+            <!-- Exibido quando 'ultimos_usuarios' está vazio -->
+            <tr>
+              <td colspan="3">Nenhum usuário.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

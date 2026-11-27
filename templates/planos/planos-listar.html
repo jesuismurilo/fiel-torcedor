@@ -1,0 +1,83 @@
+{% extends 'layout/base_menu.html' %}
+
+{% block titulo %} Planos do Sócio Torcedor - Fiel Torcedor {% endblock %}
+
+{% block conteudo %}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+  <div>
+    <h2 class="fw-bold mb-1">Planos do Fiel Torcedor</h2>
+    <p class="text-muted mb-0">Planos de sócio torcedor disponíveis no sistema</p>
+  </div>
+  <a href="{{ url_for('inserir_plano') }}" class="btn btn-success">
+    <i class="bi bi-plus-square me-1"></i> Adicionar Plano
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+  <div class="card-body">
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
+          <input type="text" id="filtro-planos" class="form-control border-start-0"
+            placeholder="Buscar por plano ou setor...">
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle mb-0">
+        <thead class="table-light">
+          <tr class="small text-uppercase">
+            <th scope="col" style="width: 60px;">#ID</th>
+            <th scope="col">Nome do Plano</th>
+            <th scope="col">Valor Mensal</th>
+            <th scope="col">Setor Preferencial</th>
+            <th scope="col">Desconto</th>
+            <th scope="col" class="text-end" style="width: 100px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-planos">
+          {% for plano in planos %}
+          <tr data-busca="{{ (plano.nome ~ ' ' ~ (plano.setor or ''))|lower }}">
+            <td class="text-muted fw-bold">{{ plano.id_plano }}</td>
+            <td class="fw-semibold"><i class="bi bi-star-fill text-custom-red me-1"></i> {{ plano.nome }}</td>
+            <td>{{ plano.valor }}</td>
+            <td>{{ plano.setor or '-' }}</td>
+            <td>
+              {% if plano.desconto %}<span class="badge text-bg-primary">{{ plano.desconto }}</span>{% else %}-{% endif %}
+            </td>
+            <td class="text-end">
+              <form action="{{ url_for('excluir_plano', id_plano=plano.id_plano) }}" method="POST" class="d-inline"
+                onsubmit="return confirm('Excluir este plano?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir"><i
+                    class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">Nenhum plano cadastrado.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Filtro da tabela: esconde as linhas que não têm o texto digitado
+  document.getElementById('filtro-planos').addEventListener('input', function () {
+    const termo = this.value.trim().toLowerCase();
+
+    document.querySelectorAll('#tabela-planos tr[data-busca]').forEach(function (linha) {
+      linha.classList.toggle('d-none', !linha.dataset.busca.includes(termo));
+    });
+  });
+</script>
+{% endblock %}

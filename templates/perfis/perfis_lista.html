@@ -1,0 +1,107 @@
+<!-- Herda o layout base com menu e estrutura comum -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da página -->
+{% block titulo %}Perfis{% endblock %}
+
+<!-- Conteúdo principal -->
+{% block conteudo %}
+  <!-- Cabeçalho com título e botão de criação -->
+  <div class="d-flex justify-content-between align-items-center">
+    <h1>Perfis</h1>
+    <div>
+      <a class="btn btn-outline-secondary" href="{{ url_for('lixeira_perfis') }}">Lixeira</a>
+      <a class="btn btn-success" href="{{ url_for('inserir_perfil') }}">Novo perfil</a>
+    </div>
+  </div>
+
+  <!-- Formulário de busca, filtros e ordenação via GET -->
+  <form class="row g-2 my-3" method="get">
+    <!-- Campo de busca por texto -->
+    <div class="col">
+      <input
+        type="text"
+        class="form-control"
+        name="busca"
+        placeholder="Buscar"
+        value="{{ busca }}"
+      >
+    </div>
+
+    <!-- Filtro por presença de descrição -->
+    <div class="col">
+      <select class="form-select" name="descricao">
+        <option value="">Todas</option>
+        <option value="com" {% if descricao == 'com' %}selected{% endif %}>Com descrição</option>
+        <option value="sem" {% if descricao == 'sem' %}selected{% endif %}>Sem descrição</option>
+      </select>
+    </div>
+
+    <!-- Critério de ordenação -->
+    <div class="col">
+      <select class="form-select" name="ordem">
+        <option value="nome" {% if ordem == 'nome' %}selected{% endif %}>Nome</option>
+        <option value="recentes" {% if ordem == 'recentes' %}selected{% endif %}>Recentes</option>
+      </select>
+    </div>
+
+    <!-- Botão para aplicar os filtros -->
+    <div class="col">
+      <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </div>
+  </form>
+
+  <!-- Tabela de perfis cadastrados -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for p in perfis %}
+        <tr>
+          <td>{{ p.id_perfil }}</td>
+          <td>{{ p.nome }}</td>
+          <td>{{ p.descricao or '—' }}</td>
+          <td>
+            <!-- Botão para editar o perfil -->
+            <a class="btn btn-sm btn-warning" href="{{ url_for('editar_perfil', id_perfil=p.id_perfil) }}">
+              Editar
+            </a>
+
+            <!-- Formulário de exclusão com token CSRF -->
+            <form class="d-inline" method="post" action="{{ url_for('excluir_perfil', id_perfil=p.id_perfil) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <!-- Exibido quando a lista 'perfis' está vazia -->
+        <tr>
+          <td colspan="4">Nenhum perfil.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Resumo de quantidade e página atual -->
+  <p>{{ total }} perfil(is). Página {{ pagina }} de {{ total_paginas }}.</p>
+
+  <!-- Paginação (exibida apenas quando há mais de 1 página) -->
+  {% if total_paginas > 1 %}
+    {% for p in range(1, total_paginas + 1) %}
+      <a
+        class="btn btn-sm {% if p == pagina %}btn-danger{% else %}btn-light{% endif %}"
+        href="{{ url_for('listar_perfis', busca=busca, descricao=descricao, ordem=ordem, pagina=p) }}"
+      >
+        {{ p }}
+      </a>
+    {% endfor %}
+  {% endif %}
+{% endblock %}

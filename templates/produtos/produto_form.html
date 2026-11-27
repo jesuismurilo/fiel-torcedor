@@ -1,0 +1,129 @@
+<!-- Herda o layout base com menu, mensagens flash e rodapé -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Produto{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <!-- Garante que 'dados' seja um dicionário vazio caso não venha preenchido -->
+  {% set dados = dados or {} %}
+
+  <!-- Título muda conforme a ação ('editar' ou 'inserir') -->
+  <h1>{{ 'Editar produto' if acao == 'editar' else 'Novo produto' }}</h1>
+
+  <!-- enctype="multipart/form-data" é obrigatório para envio de arquivos (foto) -->
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    action="{{ url_for('editar_produto', id_produto=id_produto) if acao == 'editar' else url_for('inserir_produto') }}"
+  >
+    <!-- Token de segurança contra CSRF -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Campo: Nome do produto -->
+    <div class="mb-2">
+      <label for="nome" class="form-label">Nome</label>
+      <input
+        id="nome"
+        type="text"
+        class="form-control"
+        name="nome"
+        value="{{ dados.nome or '' }}"
+        required
+      >
+    </div>
+
+    <!-- Campo: Descrição do produto -->
+    <div class="mb-2">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea
+        id="descricao"
+        class="form-control"
+        name="descricao"
+      >{{ dados.descricao or '' }}</textarea>
+    </div>
+
+    <!-- Linha com preço, estoque e categoria -->
+    <div class="row g-2">
+      <!-- Preço -->
+      <div class="col">
+        <label for="preco" class="form-label">Preço (ex.: 1.234,56)</label>
+        <input
+          id="preco"
+          type="text"
+          class="form-control"
+          name="preco"
+          value="{{ dados.preco or '' }}"
+          required
+        >
+      </div>
+
+      <!-- Estoque -->
+      <div class="col">
+        <label for="estoque" class="form-label">Estoque</label>
+        <input
+          id="estoque"
+          type="number"
+          class="form-control"
+          name="estoque"
+          value="{{ dados.estoque or 0 }}"
+          required
+        >
+      </div>
+
+      <!-- Categoria -->
+      <div class="col">
+        <label for="categoria" class="form-label">Categoria</label>
+        <select id="categoria" class="form-select" name="categoria">
+          <option value="">—</option>
+          {% for c in categorias %}
+            <option value="{{ c }}" {% if dados.categoria == c %}selected{% endif %}>
+              {{ c }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- Upload de foto -->
+    <div class="mt-2">
+      <label for="foto" class="form-label">Foto</label>
+      <input
+        id="foto"
+        type="file"
+        class="form-control"
+        name="foto"
+        accept=".jpg,.jpeg,.png,.webp"
+      >
+    </div>
+
+    <!-- Opção para remover a foto atual apenas no modo de edição -->
+    {% if acao == 'editar' %}
+      <div class="form-check mt-2">
+        <input
+          id="remover_foto"
+          type="checkbox"
+          class="form-check-input"
+          name="remover_foto"
+        >
+        <label for="remover_foto" class="form-check-label">Remover foto atual</label>
+      </div>
+    {% endif %}
+
+    <!-- Status ativo (marcado por padrão em novos produtos) -->
+    <div class="form-check mt-2">
+      <input
+        id="ativo"
+        type="checkbox"
+        class="form-check-input"
+        name="ativo"
+        {% if dados.ativo is not defined or dados.ativo %}checked{% endif %}
+      >
+      <label for="ativo" class="form-check-label">Ativo</label>
+    </div>
+
+    <!-- Botão de envio -->
+    <button type="submit" class="btn btn-success mt-3">Salvar</button>
+  </form>
+{% endblock %}

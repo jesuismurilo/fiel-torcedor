@@ -1,0 +1,17 @@
+<!-- Herda o layout limpo (sem barra de navegação principal) -->
+{% extends 'layout/base_limpa.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Acesso negado{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <!-- Cartão centralizado com mensagem de erro 403 -->
+  <div class="card p-5 text-center">
+    <h1>403</h1>
+    <p>O seu perfil não tem permissão para abrir esta página.</p>
+
+    <!-- Link para retornar ao painel principal -->
+    <a class="btn btn-danger" href="{{ url_for('dashboard') }}">Voltar para a Home</a>
+  </div>
+{% endblock %}

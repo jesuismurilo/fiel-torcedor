@@ -1,0 +1,58 @@
+{% extends 'layout/base_menu.html' %}
+
+{% block titulo %} Cadastrar plano - Fiel Torcedor {% endblock %}
+
+{% block conteudo %}
+{% set dados = dados or {} %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold mb-1">Cadastro de Plano Sócio Torcedor</h2>
+    <p class="text-muted mb-0">Registre um novo plano do Fiel Torcedor</p>
+  </div>
+  <a href="{{ url_for('listar_planos') }}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i> Voltar à Lista
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+  <div class="card-body p-4">
+    <form action="{{ url_for('inserir_plano') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label for="nome" class="form-label fw-semibold">Nome do Plano <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nome" name="nome" maxlength="100" required
+            value="{{ dados.nome }}" placeholder="Ex: Minha Vida">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="valor" class="form-label fw-semibold">Valor Mensal <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="valor" name="valor" maxlength="40" required
+            value="{{ dados.valor }}" placeholder="Ex: R$ 24,50/mês">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="setor" class="form-label fw-semibold">Setor Preferencial</label>
+          <input type="text" class="form-control" id="setor" name="setor" maxlength="100"
+            value="{{ dados.setor }}" placeholder="Ex: Norte / Sul">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="desconto" class="form-label fw-semibold">Desconto Ingresso</label>
+          <input type="text" class="form-control" id="desconto" name="desconto" maxlength="20"
+            value="{{ dados.desconto }}" placeholder="Ex: 50%">
+        </div>
+
+        <div class="col-12 pt-3 border-top d-flex gap-2 justify-content-end">
+          <a href="{{ url_for('listar_planos') }}" class="btn btn-light px-4">Cancelar</a>
+          <button type="submit" class="btn btn-success px-4 fw-semibold">
+            <i class="bi bi-check-lg me-1"></i> Salvar Plano
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'layout/base_menu.html' %}
+
+{% block titulo %} Cadastrar partida - Fiel Torcedor {% endblock %}
+
+{% block conteudo %}
+{% set dados = dados or {} %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold mb-1">Cadastro de Partida / Ingresso</h2>
+    <p class="text-muted mb-0">Registre um novo jogo e o preço base do ingresso</p>
+  </div>
+  <a href="{{ url_for('listar_ingressos') }}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i> Voltar à Lista
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+  <div class="card-body p-4">
+    <form action="{{ url_for('inserir_ingresso') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label for="partida" class="form-label fw-semibold">Partida / Confronto <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="partida" name="partida" maxlength="150" required
+            value="{{ dados.partida }}" placeholder="Ex: Corinthians x Palmeiras">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="data_jogo" class="form-label fw-semibold">Data do Jogo <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" id="data_jogo" name="data_jogo" required
+            value="{{ dados.data_jogo }}">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="estadio" class="form-label fw-semibold">Estádio</label>
+          <input type="text" class="form-control" id="estadio" name="estadio" maxlength="120"
+            value="{{ dados.estadio if dados else 'Neo Química Arena' }}">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="preco_base" class="form-label fw-semibold">Preço Base</label>
+          <input type="text" class="form-control" id="preco_base" name="preco_base" maxlength="40"
+            value="{{ dados.preco_base }}" placeholder="Ex: R$ 80,00">
+        </div>
+
+        <div class="col-12 pt-3 border-top d-flex gap-2 justify-content-end">
+          <a href="{{ url_for('listar_ingressos') }}" class="btn btn-light px-4">Cancelar</a>
+          <button type="submit" class="btn btn-success px-4 fw-semibold">
+            <i class="bi bi-check-lg me-1"></i> Salvar Partida
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

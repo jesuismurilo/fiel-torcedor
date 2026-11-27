@@ -1,0 +1,11 @@
+{% extends 'layout/base_limpa.html' %}
+
+{% block titulo %}Erro no servidor — Fiel Torcedor{% endblock %}
+
+{% block conteudo %}
+  <div class="text-center py-5">
+    <h1 class="display-1 text-custom-red">500</h1>
+    <p class="lead">Algo deu errado do nosso lado. Tente novamente em instantes.</p>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-custom-red">Voltar para a Home</a>
+  </div>
+{% endblock %}

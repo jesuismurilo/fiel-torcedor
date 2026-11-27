@@ -1,0 +1,32 @@
+<!-- Herda o layout base com menu, alertas e rodapé -->
+{% extends 'layout/base_menu.html' %}
+
+<!-- Define o título da aba do navegador -->
+{% block titulo %}Lixeira{% endblock %}
+
+<!-- Conteúdo principal da página -->
+{% block conteudo %}
+  <h1>Lixeira de perfis</h1>
+
+  <!-- Percorre os perfis excluídos logicamente -->
+  {% for p in perfis %}
+    <div class="card p-3 mb-2">
+      <!-- Nome do perfil e data/hora de exclusão -->
+      <div class="mb-2">
+        <strong>{{ p.nome }}</strong> — excluído em {{ p.deletado_em | data_hora_br }}
+      </div>
+
+      <!-- Formulário para restaurar o perfil com proteção CSRF -->
+      <form method="post" action="{{ url_for('restaurar_perfil', id_perfil=p.id_perfil) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-sm btn-success">Restaurar</button>
+      </form>
+    </div>
+  {% else %}
+    <!-- Exibido quando não há perfis na lixeira -->
+    <p>A lixeira está vazia.</p>
+  {% endfor %}
+
+  <!-- Retorna à lista de perfis -->
+  <a class="btn btn-light mt-2" href="{{ url_for('listar_perfis') }}">Voltar</a>
+{% endblock %}
